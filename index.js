@@ -25,7 +25,7 @@ server.get('/api/posts', (req, res) => {
         .then(postList => {
             res.status(200).json(postList);
         })
-        .catch(err => {
+        .catch(_ => {
             res.status(500).json({ error: "The posts information could not be retrieved." });
         })
 })
@@ -44,8 +44,8 @@ server.get('/api/posts/:id', (req, res) => {
             :
                 res.status(404).json({ message: "The post with the specified ID does not exist." })
         })
-        .catch(err => {
-            res.status(500).json({ message: "The post with the specified ID does not exist." });
+        .catch(_ => {
+            res.status(500).json({ error: "The post information could not be retrieved." });
         })
 })
 
@@ -63,7 +63,7 @@ server.get('/api/posts/:id/comments', (req, res) => {
             :
                 res.status(404).json({ message: "The post with the specified ID does not exist." })
         })
-        .catch(err => {
+        .catch(_ => {
             res.status(500).json({ error: "The comments information could not be retrieved." });
         })
 })
@@ -95,12 +95,12 @@ server.post('/api/posts', (req, res) => {
                         // If it wasn't found, something went wrong
                         res.status(500).json({ error: "There was an error while saving the post to the database" })
                 })
-                .catch(err => {
+                .catch(_ => {
                     // Error from db.findById
                     res.status(500).json({ error: "There was an error while saving the post to the database" })
                 })
         })
-        .catch(dberr => {
+        .catch(_ => {
             // Error from db.insert
             res.status(500).json({ error: "There was an error while saving the post to the database" });
     })
@@ -138,7 +138,7 @@ server.post('/api/posts/:id/comments', (req, res) => {
                         res.status(500).json({ error: "There was an error while saving the comment to the database" })
                     })
             })
-            .catch(dberr => {
+            .catch(_ => {
             // Error adding comment to datatbase
                 res.status(500).json({ error: "There was an error while saving the comment to the database" });
             })
@@ -191,7 +191,7 @@ server.put('/api/posts/:id', (req, res) => {
 
     // If missing title or contents return
     (!postData.title || !postData.contents) &&
-        res.status(400).json({ message: "The post with the specified ID does not exist." });
+        res.status(400).json({ errorMessage: "Please provide title and contents for the post." });
 
     db.findById(id)
     .then(post => {
@@ -199,7 +199,7 @@ server.put('/api/posts/:id', (req, res) => {
         if(post != "") {
             // Update database with postData object
             db.update(id, postData)
-            .then(updateRes => {
+            .then(_ => {
                 // If added, find the newly updated post and return it
                 db.findById(id)
                 .then(post => {
@@ -211,11 +211,11 @@ server.put('/api/posts/:id', (req, res) => {
                         // If not, return not found error
                         res.status(404).json({ message: "The post with the specified ID does not exist." });
                 })
-                .catch(err => {
+                .catch(_ => {
                     res.status(404).json({ message: "The post with the specified ID does not exist." });
                 })
             })
-            .catch(err => {
+            .catch(_=> {
                     res.status(500).json({ error: "The post information could not be modified." });
             })
         }
@@ -223,7 +223,7 @@ server.put('/api/posts/:id', (req, res) => {
             res.status(404).json({ message: "The post with the specified ID does not exist." });
         }
     })
-    .catch(err => {
+    .catch(_ => {
         res.status(404).json({ message: "The post with the specified ID does not exist." });
     })
 })
