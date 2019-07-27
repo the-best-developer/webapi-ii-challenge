@@ -12,12 +12,12 @@ const db = require('../data/db');
 // /api/posts/ database GET
 router.get('/', (req, res) => {
     db.find()
-        .then(postList => {
-            res.status(200).json(postList);
-        })
-        .catch(_ => {
-            res.status(500).json({ error: "The posts information could not be retrieved." });
-        })
+    .then(postList => {
+        res.status(200).json(postList);
+    })
+    .catch(_ => {
+        res.status(500).json({ error: "The posts information could not be retrieved." });
+    })
 })
 
 // ##################################################
@@ -27,16 +27,16 @@ router.get('/:id', (req, res) => {
     const { id } = req.params;
 
     db.findById(id)
-        .then(post => {
-            (post != "")
-            ?
-                res.status(200).json(post)
-            :
-                res.status(404).json({ message: "The post with the specified ID does not exist." })
-        })
-        .catch(_ => {
-            res.status(500).json({ error: "The post information could not be retrieved." });
-        })
+    .then(post => {
+        (post != "")
+        ?
+            res.status(200).json(post)
+        :
+            res.status(404).json({ message: "The post with the specified ID does not exist." })
+    })
+    .catch(_ => {
+        res.status(500).json({ error: "The post information could not be retrieved." });
+    })
 })
 
 //  ##########
@@ -54,26 +54,26 @@ router.post('/', (req, res) => {
 
     // Add post object from request.body to database
     db.insert(post)
-        .then(dbResponse => {
-            // db.insert returns an object containing an id of the newly added object
-            db.findById(dbResponse.id)
-                .then(newPost => {
-                    // Pull the newly added post from the database using the returned id and return the post
-                    (newPost != "")
-                    ?
-                        res.status(200).json(newPost)
-                    :
-                        // If it wasn't found, something went wrong
-                        res.status(500).json({ error: "There was an error while saving the post to the database" })
-                })
-                .catch(_ => {
-                    // Error from db.findById
-                    res.status(500).json({ error: "There was an error while saving the post to the database" })
-                })
+    .then(dbResponse => {
+         // db.insert returns an object containing an id of the newly added object
+        db.findById(dbResponse.id)
+        .then(newPost => {
+            // Pull the newly added post from the database using the returned id and return the post
+            (newPost != "")
+            ?
+                res.status(200).json(newPost)
+            :
+                // If it wasn't found, something went wrong
+                res.status(500).json({ error: "There was an error while saving the post to the database" })
         })
         .catch(_ => {
-            // Error from db.insert
-            res.status(500).json({ error: "There was an error while saving the post to the database" });
+            // Error from db.findById
+            res.status(500).json({ error: "There was an error while saving the post to the database" })
+        })
+    })
+    .catch(_ => {
+        // Error from db.insert
+        res.status(500).json({ error: "There was an error while saving the post to the database" });
     })
 })
 

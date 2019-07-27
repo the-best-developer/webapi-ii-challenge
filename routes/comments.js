@@ -14,16 +14,16 @@ router.get('/:id/comments', (req, res) => {
     const { id } = req.params;
 
     db.findPostComments(id)
-        .then(comments => {
-            (comments != "")
-            ?
-                res.status(200).json(comments)
-            :
-                res.status(404).json({ message: "The post with the specified ID does not exist." })
-        })
-        .catch(_ => {
+    .then(comments => {
+        (comments != "")
+        ?
+            res.status(200).json(comments)
+        :
+            res.status(404).json({ message: "The post with the specified ID does not exist." })
+    })
+    .catch(_ => {
             res.status(500).json({ error: "The comments information could not be retrieved." });
-        })
+    })
 })
 
 //  ##########
@@ -49,19 +49,19 @@ router.post('/:id/comments', (req, res) => {
                 text: comment.text,
                 post_id: id
             }
-            
+
             // Insert comment object
             db.insertComment(newComment)
             .then(dbResponse => {
                 // db.insertComment returns an object containing an id of the newly added object
                 db.findCommentById(dbResponse.id)
-                    .then(addedComment => {
-                        res.status(201).json(addedComment)
-                    })
-                    .catch(err => {
-                        // Error from db.findCommentById
-                        res.status(500).json({ error: "There was an error while saving the comment to the database" })
-                    })
+                .then(addedComment => {
+                    res.status(201).json(addedComment)
+                })
+                .catch(err => {
+                    // Error from db.findCommentById
+                    res.status(500).json({ error: "There was an error while saving the comment to the database" })
+                })
             })
             .catch(_ => {
                 // Error adding comment to datatbase
@@ -73,7 +73,6 @@ router.post('/:id/comments', (req, res) => {
             res.status(500).json({ message: "The post with the specified ID does not exist." });
         }
     })
-    
 })
 
 module.exports = router;
